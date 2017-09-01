@@ -1,3 +1,4 @@
+// generic stuff:
 #include <algorithm>
 #include <cstring>
 #include <iostream>
@@ -16,10 +17,13 @@
 #include <arpa/inet.h>
 #endif /* WIN32 */
 
-// optional:
+// std::optional:
 #include <experimental/optional>
 #include <utility>
 using std::experimental::optional;
+
+// project stuff:
+#include "sound.h"
 using namespace std;
 
 
@@ -329,7 +333,7 @@ class satconhud : public sf::Drawable {
 
 int main() {
     srand( time(NULL) );
-    alerter::init();
+    sound::init();
 
     std::thread thrd( grab_loop );
 
@@ -346,7 +350,7 @@ int main() {
         }
 
         // alerter update
-        alerter::update();
+        sound::update();
 
         // rendering
         window.clear();
