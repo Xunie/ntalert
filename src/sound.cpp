@@ -1,4 +1,5 @@
 #include <vector>
+#include "network.h"
 #include "sound.h"
 using namespace std;
 
@@ -45,8 +46,10 @@ void sound::init() {
 }
 
 void sound::update() {
-    if( current_players >= 1 ) {
-        if( c.getElapsedTime().asSeconds() > max(1u, 9u-current_players) ) {
+    uint32_t num_players = network::get_num_players();
+
+    if( num_players >= 1 ) {
+        if( c.getElapsedTime().asSeconds() > max(1u, 9u-num_players) ) {
             beep.play();
             c.restart();
         }
