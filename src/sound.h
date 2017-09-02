@@ -7,6 +7,7 @@
 class sound {
     static sf::Music equip;
     static sf::Music beep;
+    static sf::Music error;
 
     static sf::Clock c;
 public:

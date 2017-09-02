@@ -10,14 +10,26 @@ using namespace std;
 using std::experimental::optional;
 
 
-volatile bool network::running = true;
-volatile uint32_t network::num_players = 0;
+// members:
 std::thread network::thrd;
+std::atomic<bool> network::running;
+std::atomic<bool> network::valid;
+std::atomic<uint32_t> network::num_players;
 
+std::mutex last_update_mtx;
+sf::Clock network::last_update;
+
+
+// prototypes:
 optional<vector<pair<sf::IpAddress,uint16_t>>> request_servers( float timeout = 5.0f );
 optional<uint16_t> serv_get_num_players( sf::IpAddress host, uint16_t port, float timeout = 5.0f );
 
+
+// interface ///////////////////////////////////////////////////////////////////
 void network::init() {
+    running = true;
+    valid = false;
+    num_players = 0;
     thrd = thread( grab_loop );
 }
 
@@ -30,13 +42,24 @@ uint32_t network::get_num_players() {
     return num_players;
 }
 
+bool network::is_valid() {
+    return valid;
+}
+
+
+sf::Time network::since_last_update() {
+    // XXX use the fucking mutex!
+    return last_update.getElapsedTime();
+}
+
+// internal ////////////////////////////////////////////////////////////////////
 void network::grab_loop() {
     std::random_device rd;
     std::mt19937 mt( rd() );
 
     while( running ) {
-        num_players = request_global_players();
-        
+        update_num_players();
+
         uint64_t to_sleep = (45*1000) + (mt()%(30*1000));
         while( to_sleep > 0 and running ) {
             sf::sleep( sf::milliseconds( min(to_sleep, 10ull) ) );
@@ -45,18 +68,25 @@ void network::grab_loop() {
     }
 }
 
-uint32_t network::request_global_players() {
+void network::update_num_players() {
     uint32_t count = 0;
 
     auto servers = request_servers();
     
+    bool success = false;
     for( auto s : *servers ) {
         optional<uint16_t> r = serv_get_num_players( s.first, s.second );
-        if( r )
+        if( r ) {
             count += *r;
+            success = true;
+        }
     }
 
-    return count;
+    num_players = count;
+    valid = success;
+
+    if( valid )
+        last_update.restart();
 }
 
 // crafts a packet for the hl2 masterserver

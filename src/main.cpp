@@ -12,35 +12,8 @@
 // project stuff:
 #include "sound.h"
 #include "network.h"
+#include "hud.h"
 using namespace std;
-
-
-
-
-
-
-
-/*struct resource {
-    void *ptr;
-    size_t len;
-}
-
-class satconhud : public sf::Drawable {
-    string state;
-    
-    sf::Clock c;
-    float next_anim;
-
-    void update() {
-        if( next_anim < c.getElapsedTime().asSeconds() ) {
-        }
-    }
-    
-    void draw( sf::RenderTarget &target, sf::RenderStates states ) const {
-    }
-};*/
-
-
 
 
 int main() {
@@ -59,11 +32,14 @@ int main() {
             }
         }
 
-        // alerter update
+        // update subsystems
         sound::update();
+        hud.update();
 
         // rendering
         window.clear();
+
+        window.draw( hud );
 
         window.display();
     }
