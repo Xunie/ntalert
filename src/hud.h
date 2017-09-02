@@ -13,6 +13,7 @@ class hud_t : public sf::Drawable {
     std::string state;
 
     sf::Clock   since_last_change;
+    sf::Clock   since_start;
     sf::Sprite *current_sprite;
 
     sf::Texture background_texture;

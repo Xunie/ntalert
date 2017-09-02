@@ -50,7 +50,7 @@ void hud_t::draw( sf::RenderTarget &target, sf::RenderStates states ) const {
 void hud_t::update() {
     float t = since_last_change.getElapsedTime().asSeconds();
 
-    if( network::is_valid() ) {
+    if( network::is_valid() and since_start.getElapsedTime().asSeconds() > 7 ) {
         current_sprite->setColor( sf::Color::Green );
 
         // do the loop animation
