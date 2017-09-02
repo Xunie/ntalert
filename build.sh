@@ -48,20 +48,13 @@ LDFLAGS=( -L 'C:\Program Files (x86)\SFML\lib'
 #          -luser32
          );
 
-rm -f objects/*.o
+rm -f objects/*.o blobs.o
 
-for folder in audio images blobs
-    for i in `ls $folder`; do
-        objcopy -I binary -O pe-x86-64 -B i386:x86-64 "$folder/$i" "objects/$i.o"
-    done
+pushd "blobs"
+for i in `ls`; do
+    objcopy -I binary -O pe-x86-64 -B i386:x86-64 "$i" "../objects/$i.o"
 done
+popd
 
 ld -r objects/*.o -o blobs.o
 g++ src/*.cpp blobs.o -o main.exe "${CFLAGS[@]}" "${LDFLAGS[@]}"
-
-
-
-
-
-
-
