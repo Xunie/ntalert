@@ -5,6 +5,9 @@ hud_t hud;
 
 
 // binary blobs
+extern unsigned char _binary_background_png_start;
+extern unsigned char _binary_background_png_size;
+
 extern unsigned char _binary_hud_blur_png_start;
 extern unsigned char _binary_hud_blur_png_size;
 extern unsigned char _binary_hud_left_png_start;
@@ -17,6 +20,12 @@ extern unsigned char _binary_hud_fill_png_start;
 extern unsigned char _binary_hud_fill_png_size;
 
 hud_t::hud_t() : current_sprite(nullptr) {
+    // background
+    background_texture.loadFromMemory( &_binary_background_png_start, (size_t) &_binary_background_png_size );
+    background_sprite.setTexture( background_texture );
+    background_sprite.setScale( sf::Vector2f(0.5, 0.5) );
+
+    // indicator indicator
     textures["blur"].loadFromMemory(  &_binary_hud_blur_png_start, (size_t) &_binary_hud_blur_png_size );
     textures["left"].loadFromMemory(  &_binary_hud_left_png_start, (size_t) &_binary_hud_left_png_size );
     textures["right"].loadFromMemory( &_binary_hud_right_png_start, (size_t) &_binary_hud_right_png_size );
@@ -32,6 +41,8 @@ hud_t::hud_t() : current_sprite(nullptr) {
 }
 
 void hud_t::draw( sf::RenderTarget &target, sf::RenderStates states ) const {
+    target.draw( background_sprite );
+
     if( current_sprite )
         target.draw( *current_sprite );
 }

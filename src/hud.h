@@ -15,6 +15,8 @@ class hud_t : public sf::Drawable {
     sf::Clock   since_last_change;
     sf::Sprite *current_sprite;
 
+    sf::Texture background_texture;
+    sf::Sprite background_sprite;
 public:
     hud_t();
     void draw( sf::RenderTarget &target, sf::RenderStates states ) const;

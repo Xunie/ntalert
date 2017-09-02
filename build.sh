@@ -1,6 +1,7 @@
 #!/bin/bash
 
-CFLAGS=( -std=c++17
+CFLAGS=( -mwindows
+         -std=c++17
          -Wall
          -Wextra
          -D SFML_STATIC

@@ -21,7 +21,7 @@ int main() {
     sound::init();
     network::init();
 
-    sf::RenderWindow window( sf::VideoMode(600, 300), "NT Alert" );
+    sf::RenderWindow window( sf::VideoMode(600, 300), "NT Alert", sf::Style::Titlebar | sf::Style::Close );
 
     window.setVerticalSyncEnabled( true );
 
