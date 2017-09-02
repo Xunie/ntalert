@@ -47,4 +47,4 @@ LDFLAGS=( -L 'C:\Program Files (x86)\SFML\lib'
 #          -luser32
          );
 
-g++ audio/sounds.o src/*.cpp -o main.exe "${CFLAGS[@]}" "${LDFLAGS[@]}"
+g++ src/*.cpp audio/sounds.o img/images.o -o main.exe "${CFLAGS[@]}" "${LDFLAGS[@]}"

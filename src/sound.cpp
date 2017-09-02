@@ -61,8 +61,8 @@ void sound::update() {
             c.restart();
         }
     }
-    
-    if( !network::is_valid()) {
+
+    if( !network::is_valid() and network::since_last_update().asSeconds() > 5 ) {
         if( error.getStatus() == sf::SoundSource::Stopped )
             error.play();
     } else {

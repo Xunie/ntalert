@@ -16,8 +16,8 @@ std::atomic<bool> network::running;
 std::atomic<bool> network::valid;
 std::atomic<uint32_t> network::num_players;
 
-std::mutex last_update_mtx;
-sf::Clock network::last_update;
+std::mutex network::last_update_mtx;
+sf::Clock  network::last_update;
 
 
 // prototypes:
@@ -48,7 +48,7 @@ bool network::is_valid() {
 
 
 sf::Time network::since_last_update() {
-    // XXX use the fucking mutex!
+    std::unique_lock<std::mutex> lock( last_update_mtx );
     return last_update.getElapsedTime();
 }
 
@@ -61,7 +61,7 @@ void network::grab_loop() {
         update_num_players();
 
         uint64_t to_sleep = (45*1000) + (mt()%(30*1000));
-        while( to_sleep > 0 and running ) {
+        while( valid and to_sleep > 0 and running ) {
             sf::sleep( sf::milliseconds( min(to_sleep, 10ull) ) );
             to_sleep -= min(to_sleep, 10ull);
         }
@@ -75,18 +75,27 @@ void network::update_num_players() {
     
     bool success = false;
     for( auto s : *servers ) {
-        optional<uint16_t> r = serv_get_num_players( s.first, s.second );
+        optional<uint16_t> r;
+
+        // retry three times!
+        for( int i = 0; i < 3 and (!r); i++ )
+            r = serv_get_num_players( s.first, s.second, 3 );
+
         if( r ) {
             count += *r;
             success = true;
         }
     }
 
+    // update information
     num_players = count;
     valid = success;
 
-    if( valid )
+    // reset "since last update" timer on valid update
+    if( valid ) {
+        std::unique_lock<std::mutex> lock( last_update_mtx );
         last_update.restart();
+    }
 }
 
 // crafts a packet for the hl2 masterserver

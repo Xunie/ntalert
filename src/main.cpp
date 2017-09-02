@@ -23,6 +23,8 @@ int main() {
 
     sf::RenderWindow window( sf::VideoMode(600, 300), "NT Alert" );
 
+    window.setVerticalSyncEnabled( true );
+
     while( window.isOpen() ) {
         sf::Event event;
         while( window.pollEvent(event) ) {
