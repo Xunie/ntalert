@@ -21,6 +21,7 @@ class hud_t : public sf::Drawable {
 
     sf::Font font;
     sf::Text text;
+    sf::Text credits;
 public:
     hud_t();
     void draw( sf::RenderTarget &target, sf::RenderStates states ) const;

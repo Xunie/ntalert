@@ -10,6 +10,7 @@
 #include <SFML/System.hpp>
 
 // project stuff:
+#include "alert.h"
 #include "sound.h"
 #include "network.h"
 #include "hud.h"
@@ -21,7 +22,7 @@ int main() {
     sound::init();
     network::init();
 
-    sf::RenderWindow window( sf::VideoMode(600, 300), "NT Alert", sf::Style::Titlebar | sf::Style::Close );
+    sf::RenderWindow window( sf::VideoMode(600, 300), "NT Alert v0.1", sf::Style::Titlebar | sf::Style::Close );
 
     window.setVerticalSyncEnabled( true );
 
@@ -31,6 +32,15 @@ int main() {
             if( event.type == sf::Event::Closed ) {
                 window.close();
                 break;
+            }
+            
+            if( event.type == sf::Event::KeyPressed ) {
+                uint32_t threshold = alert::get_threshold();
+                if( event.key.code == sf::Keyboard::Up )
+                    threshold = (threshold+1)%32;
+                if( event.key.code == sf::Keyboard::Down )
+                    threshold = (threshold-1)%32;
+                alert::set_threshold( threshold );
             }
         }
 
