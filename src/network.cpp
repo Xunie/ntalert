@@ -15,6 +15,7 @@ std::thread network::thrd;
 std::atomic<bool> network::running;
 std::atomic<bool> network::valid;
 std::atomic<uint32_t> network::num_players;
+std::atomic<uint32_t> network::num_servers;
 
 std::mutex network::last_update_mtx;
 sf::Clock  network::last_update;
@@ -40,6 +41,10 @@ void network::cleanup() {
 
 uint32_t network::get_num_players() {
     return num_players;
+}
+
+uint32_t network::get_num_servers() {
+    return num_servers;
 }
 
 bool network::is_valid() {
@@ -71,8 +76,10 @@ void network::grab_loop() {
 void network::update_num_players() {
     uint32_t count = 0;
 
+    // get all servers from master server
     auto servers = request_servers();
-    
+
+    // ask each their num of players
     bool success = false;
     for( auto s : *servers ) {
         optional<uint16_t> r;
@@ -90,6 +97,8 @@ void network::update_num_players() {
     // update information
     num_players = count;
     valid = success;
+    num_servers = servers->size();
+
 
     // reset "since last update" timer on valid update
     if( valid ) {

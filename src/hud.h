@@ -18,6 +18,9 @@ class hud_t : public sf::Drawable {
 
     sf::Texture background_texture;
     sf::Sprite background_sprite;
+
+    sf::Font font;
+    sf::Text text;
 public:
     hud_t();
     void draw( sf::RenderTarget &target, sf::RenderStates states ) const;

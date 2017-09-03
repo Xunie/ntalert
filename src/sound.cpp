@@ -56,8 +56,9 @@ void sound::update() {
     uint32_t num_players = network::get_num_players();
 
     if( num_players >= 1 ) {
-        if( c.getElapsedTime().asSeconds() > max(1u, 9u-num_players) ) {
+        if( c.getElapsedTime().asSeconds() > max(1.0, 9.0-num_players) ) {
             beep.play();
+            
             c.restart();
         }
     }

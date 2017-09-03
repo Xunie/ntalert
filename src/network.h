@@ -18,6 +18,7 @@ class network {
     static std::atomic<bool> running;
     static std::atomic<bool> valid;
     static std::atomic<uint32_t> num_players;
+    static std::atomic<uint32_t> num_servers;
 
     static std::mutex last_update_mtx;
     static sf::Clock  last_update;
@@ -26,6 +27,7 @@ public:
     static void init();
     static void cleanup();
     static uint32_t get_num_players();
+    static uint32_t get_num_servers();
     static bool is_valid();
     static sf::Time since_last_update();
 
