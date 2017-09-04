@@ -1,0 +1,16 @@
+#ifndef BLOBS_H
+#define BLOBS_H
+#include <string>
+#include <map>
+
+struct blob {
+    void *ptr;
+    size_t size;
+    
+    blob( void *p, size_t s ) : ptr(p), size(s) {};
+};
+
+// (should) contain all the binary blobs linked into the binary
+extern const std::map<std::string, blob> blobs;
+
+#endif /* BLOBS_H */

@@ -5,7 +5,7 @@
 class alert {
     static uint32_t player_threshold;
 public:
-    static uint32_t get_threshold();
+    static uint32_t &get_threshold();
     static void set_threshold( uint32_t x );
 };
 

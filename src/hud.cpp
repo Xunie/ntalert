@@ -1,5 +1,7 @@
+#include <iostream>
 #include <sstream>
 #include "alert.h"
+#include "blobs.h"
 #include "hud.h"
 #include "network.h"
 using namespace std;
@@ -8,27 +10,9 @@ using namespace std;
 hud_t hud;
 
 
-// binary blobs
-extern unsigned char _binary_greenm03_ttf_start;
-extern unsigned char _binary_greenm03_ttf_size;
-
-extern unsigned char _binary_background_png_start;
-extern unsigned char _binary_background_png_size;
-
-extern unsigned char _binary_hud_blur_png_start;
-extern unsigned char _binary_hud_blur_png_size;
-extern unsigned char _binary_hud_left_png_start;
-extern unsigned char _binary_hud_left_png_size;
-extern unsigned char _binary_hud_right_png_start;
-extern unsigned char _binary_hud_right_png_size;
-extern unsigned char _binary_hud_text_png_start;
-extern unsigned char _binary_hud_text_png_size;
-extern unsigned char _binary_hud_fill_png_start;
-extern unsigned char _binary_hud_fill_png_size;
-
-hud_t::hud_t() : current_sprite(nullptr) {
+void hud_t::init() {
     // font
-    font.loadFromMemory( &_binary_greenm03_ttf_start, (size_t) &_binary_greenm03_ttf_size );
+    font.loadFromMemory( blobs.at("greenm03.ttf").ptr, blobs.at("greenm03.ttf").size );
     text.setFont( font );
     text.setCharacterSize( 18 );
     text.setPosition( sf::Vector2f(10, 230) );
@@ -40,15 +24,20 @@ hud_t::hud_t() : current_sprite(nullptr) {
     credits.setFillColor( sf::Color( 255, 255, 255, 173 ) );
 
     // background
-    background_texture.loadFromMemory( &_binary_background_png_start, (size_t) &_binary_background_png_size );
+    background_texture.loadFromMemory( blobs.at("background.png").ptr, blobs.at("background.png").size );
     background_sprite.setTexture( background_texture );
 
     // indicator indicator
-    textures["blur"].loadFromMemory(  &_binary_hud_blur_png_start, (size_t) &_binary_hud_blur_png_size );
-    textures["left"].loadFromMemory(  &_binary_hud_left_png_start, (size_t) &_binary_hud_left_png_size );
-    textures["right"].loadFromMemory( &_binary_hud_right_png_start, (size_t) &_binary_hud_right_png_size );
-    textures["text"].loadFromMemory(  &_binary_hud_text_png_start, (size_t) &_binary_hud_text_png_size );
-    textures["fill"].loadFromMemory(  &_binary_hud_fill_png_start, (size_t) &_binary_hud_fill_png_size );
+    const vector<pair<string, string>> vec = {
+        {"blur", "hud_blur.png"},
+        {"left", "hud_left.png"},
+        {"right","hud_right.png"},
+        {"text", "hud_text.png"},
+        {"fill", "hud_fill.png"}
+    };
+    
+    for( auto i : vec )
+        textures[i.first].loadFromMemory( blobs.at(i.second).ptr, blobs.at(i.second).size );
 
     // this we CAN automate
     for( auto i : {"blur", "left", "right", "text", "fill"} )
@@ -83,9 +72,6 @@ void hud_t::update() {
         }
 
         {
-            // the ghost hud sprite:
-            current_sprite->setColor( sf::Color::Green );
-
             // do the loop animation
             if( current_sprite == &(sprites[3]) and t > 0.5 ) {
                 current_sprite = &(sprites[4]);
@@ -99,6 +85,9 @@ void hud_t::update() {
                 and current_sprite != &(sprites[4]) )
                     current_sprite = &(sprites[3]);
             }
+
+            // the ghost hud sprite:
+            current_sprite->setColor( sf::Color::Green );
         }
     } else {
         {
@@ -108,14 +97,14 @@ void hud_t::update() {
         }
         
         {
-            // ghost hud sprite:
-            current_sprite->setColor( sf::Color::Red );
-
             // random sprite glitching        
             if( since_last_change.getElapsedTime().asSeconds() > (1.0/4) ) {
                 current_sprite = &(sprites[rand()%sprites.size()]);
                 since_last_change.restart();
             }
+
+            // ghost hud sprite:
+            current_sprite->setColor( sf::Color::Red );
         }
     }
 

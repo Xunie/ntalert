@@ -10,7 +10,7 @@ class hud_t : public sf::Drawable {
 
     std::map<std::string, sf::Texture> textures;
     std::vector<sf::Sprite> sprites;
-    std::string state;
+    //std::string state;
 
     sf::Clock   since_last_change;
     sf::Clock   since_start;
@@ -23,7 +23,7 @@ class hud_t : public sf::Drawable {
     sf::Text text;
     sf::Text credits;
 public:
-    hud_t();
+    void init();
     void draw( sf::RenderTarget &target, sf::RenderStates states ) const;
 
     void update();

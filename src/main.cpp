@@ -10,6 +10,7 @@
 #include <SFML/System.hpp>
 
 // project stuff:
+#include "blobs.h"
 #include "alert.h"
 #include "sound.h"
 #include "network.h"
@@ -19,41 +20,41 @@ using namespace std;
 
 int main() {
     srand( time(NULL) );
+    hud.init();
     sound::init();
     network::init();
 
     sf::RenderWindow window( sf::VideoMode(600, 300), "NT Alert v0.1", sf::Style::Titlebar | sf::Style::Close );
 
     window.setVerticalSyncEnabled( true );
+    window.setFramerateLimit(60);
 
     while( window.isOpen() ) {
-        sf::Event event;
-        while( window.pollEvent(event) ) {
-            if( event.type == sf::Event::Closed ) {
-                window.close();
-                break;
-            }
-            
-            if( event.type == sf::Event::KeyPressed ) {
-                uint32_t threshold = alert::get_threshold();
-                if( event.key.code == sf::Keyboard::Up )
-                    threshold = (threshold+1)%32;
-                if( event.key.code == sf::Keyboard::Down )
-                    threshold = (threshold-1)%32;
-                alert::set_threshold( threshold );
-            }
-        }
-
         // update subsystems
         sound::update();
         hud.update();
 
         // rendering
         window.clear();
-
         window.draw( hud );
-
         window.display();
+
+        // handle events
+        sf::Event e;
+        while( window.pollEvent(e) ) {
+            if( e.type == sf::Event::Closed ) {
+                window.close();
+                break;
+            }
+
+            if( e.type == sf::Event::KeyPressed ) {
+                uint32_t &ref = alert::get_threshold();
+                if( e.key.code == sf::Keyboard::Up )
+                    ref = (ref + 1) % 32;
+                if( e.key.code == sf::Keyboard::Down )
+                    ref = (ref - 1) % 32;
+            }
+        }
     }
 
     network::cleanup();
