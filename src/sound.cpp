@@ -1,5 +1,6 @@
 #include <vector>
 #include "alert.h"
+#include "blobs.h"
 #include "network.h"
 #include "sound.h"
 using namespace std;
@@ -13,51 +14,30 @@ sf::Clock sound::c;
 
 
 
-// binary blobs
-extern unsigned char _binary_ghost_equip_wav_start;
-extern unsigned char _binary_ghost_equip_wav_size;
-extern unsigned char _binary_ghost_equip2_wav_start;
-extern unsigned char _binary_ghost_equip2_wav_size;
-extern unsigned char _binary_ghost_equip3_wav_start;
-extern unsigned char _binary_ghost_equip3_wav_size;
-extern unsigned char _binary_ghost_equip4_wav_start;
-extern unsigned char _binary_ghost_equip4_wav_size;
-extern unsigned char _binary_ghost_equip5_wav_start;
-extern unsigned char _binary_ghost_equip5_wav_size;
-
-extern unsigned char _binary_ghost_ping_wav_start;
-extern unsigned char _binary_ghost_ping_wav_size;
-
-extern unsigned char _binary_ghost_idle_loop_wav_start;
-extern unsigned char _binary_ghost_idle_loop_wav_size;
-
 void sound::init() {
-    const vector<pair<void*, size_t>> sounds = {
-        { &_binary_ghost_equip_wav_start,  (size_t) &_binary_ghost_equip_wav_size  },
-        { &_binary_ghost_equip2_wav_start, (size_t) &_binary_ghost_equip2_wav_size },
-        { &_binary_ghost_equip3_wav_start, (size_t) &_binary_ghost_equip3_wav_size },
-        { &_binary_ghost_equip4_wav_start, (size_t) &_binary_ghost_equip4_wav_size },
-        { &_binary_ghost_equip5_wav_start, (size_t) &_binary_ghost_equip5_wav_size },
-        { &_binary_ghost_ping_wav_start,   (size_t) &_binary_ghost_ping_wav_size   }
+    const vector<string> sounds = {
+        "ghost_equip.wav",
+        "ghost_equip2.wav",
+        "ghost_equip3.wav",
+        "ghost_equip4.wav",
+        "ghost_equip5.wav"
     };
 
     // random startup sound
-    auto startup = sounds[rand()%5];
-    equip.openFromMemory( startup.first, startup.second );
+    auto startup = sounds[rand()%sounds.size()];
+    equip.openFromMemory( blobs.at(startup).ptr, blobs.at(startup).size );
     equip.play();
 
-    // load the beep sound
-    beep.openFromMemory( &_binary_ghost_ping_wav_start, (size_t) &_binary_ghost_ping_wav_size );
-    
-    // load the error sound
-    error.openFromMemory( &_binary_ghost_idle_loop_wav_start, (size_t) &_binary_ghost_idle_loop_wav_size );
+    // rest of the sounds
+    beep.openFromMemory( blobs.at("ghost_ping.wav").ptr, blobs.at("ghost_ping.wav").size );
+    error.openFromMemory( blobs.at("ghost_idle_loop.wav").ptr, blobs.at("ghost_idle_loop.wav").size );
 }
 
 void sound::update() {
     uint32_t num_players = network::get_num_players();
 
     const uint32_t threshold = alert::get_threshold();
-    if( num_players >= threshold ) {
+    if( network::is_valid() and num_players >= threshold ) {
         if( c.getElapsedTime().asSeconds() > max(1.0, 5.0-(num_players-threshold)) ) {
             beep.play();
             c.restart();

@@ -67,8 +67,8 @@ void network::grab_loop() {
 
         uint64_t to_sleep = (45*1000) + (mt()%(30*1000));
         while( valid and to_sleep > 0 and running ) {
-            sf::sleep( sf::milliseconds( min(to_sleep, 10ull) ) );
-            to_sleep -= min(to_sleep, 10ull);
+            sf::sleep( sf::milliseconds( min(to_sleep, 20ull) ) );
+            to_sleep -= min(to_sleep, 20ull);
         }
     }
 }
@@ -193,17 +193,10 @@ optional<vector<pair<sf::IpAddress,uint16_t>>> request_servers( float timeout ) 
         return {};
     }
 
-    // hardcoded IPs because IDGAF
-    const vector<string> hosts = {
-        "208.64.200.39",
-        "208.64.200.52",
-        "208.64.200.65"
-    };
-
     // send initial request to all servers
     for( auto h : hosts ) {
         string packet = craft_packet("\\appid\\244630");
-        auto status = socket.send(packet.c_str(), packet.size(), h, 27011);
+        auto status = socket.send(packet.c_str(), packet.size(), "hl2master.steampowered.com", 27011);
         if( status != sf::Socket::Done ) {
             cout << "fail on initial packet send" << endl;
             return {};
