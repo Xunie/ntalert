@@ -13,11 +13,9 @@ CFLAGS=( -mwindows
          -O3
 #         -fopenmp
 #         -ffast-math
-         -I 'C:\Program Files (x86)\SFML-mingw32\include');
+        );
 
-
-LDFLAGS=( -L 'C:\Program Files (x86)\SFML-mingw32\lib'
-          -l sfml-graphics-s
+LDFLAGS=( -l sfml-graphics-s
           -l sfml-audio-s
           -l sfml-window-s
           -l sfml-network-s
@@ -50,6 +48,21 @@ LDFLAGS=( -L 'C:\Program Files (x86)\SFML-mingw32\lib'
 #          -luser32
          );
 
+
+if   [[ $MSYSTEM = "MINGW32" ]]; then
+     CFLAGS+=(-I 'C:\Program Files (x86)\SFML-mingw32\include')
+    LDFLAGS+=(-L 'C:\Program Files (x86)\SFML-mingw32\lib')
+elif [[ $MSYSTEM = "MINGW64" ]]; then
+     CFLAGS+=(-I 'C:\Program Files (x86)\SFML-mingw64\include')
+    LDFLAGS+=(-L 'C:\Program Files (x86)\SFML-mingw64\lib')
+else
+    echo "MINGW required for compilation"
+    echo "Or just write your own build script a bit, ya big fat dummy :3"
+    exit
+fi
+
+
+# blobs stuff
 rm -f objects/*.o blobs.o
 
 pushd "blobs"
@@ -60,4 +73,8 @@ wait
 popd
 
 ld -r objects/*.o -o blobs.o
-g++ src/*.cpp blobs.o -o main.exe "${CFLAGS[@]}" "${LDFLAGS[@]}"
+
+# icon stuff
+windres icon.rc -O coff -o icon.res
+
+g++ src/*.cpp blobs.o icon.res -o main.exe "${CFLAGS[@]}" "${LDFLAGS[@]}"
