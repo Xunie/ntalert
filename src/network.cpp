@@ -1,17 +1,15 @@
 #include <iostream>
+#include <random>
 #include <sstream>
 #include <thread>
 #include "network.h"
 using namespace std;
 
 // std::optional:
-#include <experimental/optional>
 #include <utility>
-using std::experimental::optional;
 
 
 // members:
-std::thread network::thrd;
 std::atomic<bool> network::running;
 std::atomic<bool> network::valid;
 std::atomic<uint32_t> network::num_players;
@@ -193,14 +191,12 @@ optional<vector<pair<sf::IpAddress,uint16_t>>> request_servers( float timeout ) 
         return {};
     }
 
-    // send initial request to all servers
-    for( auto h : hosts ) {
-        string packet = craft_packet("\\appid\\244630");
-        auto status = socket.send(packet.c_str(), packet.size(), "hl2master.steampowered.com", 27011);
-        if( status != sf::Socket::Done ) {
-            cout << "fail on initial packet send" << endl;
-            return {};
-        }
+    // send initial request to a master server
+    string packet = craft_packet("\\appid\\244630");
+    auto status = socket.send(packet.c_str(), packet.size(), "hl2master.steampowered.com", 27011);
+    if( status != sf::Socket::Done ) {
+        cout << "fail on initial packet send" << endl;
+        return {};
     }
 
     // we need non-blocking operation for the next bit

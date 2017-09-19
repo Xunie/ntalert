@@ -11,11 +11,14 @@
 
 // project stuff:
 #include "blobs.h"
+#include "config.h"
 #include "alert.h"
 #include "sound.h"
 #include "network.h"
 #include "hud.h"
 using namespace std;
+
+
 
 
 int main() {
@@ -24,7 +27,7 @@ int main() {
     sound::init();
     network::init();
 
-    sf::RenderWindow window( sf::VideoMode(600, 300), "NT Alert v0.1", sf::Style::Titlebar | sf::Style::Close );
+    sf::RenderWindow window( sf::VideoMode(600, 300), NTALERT_TITLE, sf::Style::Titlebar | sf::Style::Close );
 
     window.setVerticalSyncEnabled( true );
     window.setFramerateLimit(60);

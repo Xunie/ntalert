@@ -1,18 +1,22 @@
 #!/bin/bash
 
 CFLAGS=( -mwindows
-         -std=c++17
+         -std=c++1z
          -Wall
          -Wextra
+         -static
+         -static-libgcc
+         -static-libstdc++ 
          -D SFML_STATIC
+
 #         -DWIN32
          -O3
 #         -fopenmp
 #         -ffast-math
-         -I 'C:\Program Files (x86)\SFML\include');
+         -I 'C:\Program Files (x86)\SFML-mingw32\include');
 
 
-LDFLAGS=( -L 'C:\Program Files (x86)\SFML\lib'
+LDFLAGS=( -L 'C:\Program Files (x86)\SFML-mingw32\lib'
           -l sfml-graphics-s
           -l sfml-audio-s
           -l sfml-window-s
@@ -34,8 +38,6 @@ LDFLAGS=( -L 'C:\Program Files (x86)\SFML\lib'
           -l vorbis
           -l ogg
 
-#          -l ws2_32
-
 #          -lfltk_jpeg
 #          -lfltk
 #          -lole32
@@ -52,8 +54,9 @@ rm -f objects/*.o blobs.o
 
 pushd "blobs"
 for i in `ls`; do
-    objcopy -I binary -O pe-x86-64 -B i386:x86-64 "$i" "../objects/$i.o"
+    ld -o "../objects/$i.o" -b binary -r "$i" &
 done
+wait
 popd
 
 ld -r objects/*.o -o blobs.o

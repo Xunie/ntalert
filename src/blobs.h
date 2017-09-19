@@ -4,10 +4,10 @@
 #include <map>
 
 struct blob {
-    void *ptr;
-    size_t size;
+    const void *ptr;
+    const size_t size;
     
-    blob( void *p, size_t s ) : ptr(p), size(s) {};
+    blob( const void *p, const size_t s ) : ptr(p), size(s) {};
 };
 
 // (should) contain all the binary blobs linked into the binary

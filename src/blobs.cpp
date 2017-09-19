@@ -4,65 +4,51 @@
 using namespace std;
 
 
-// this stuff is all linked in:
-extern unsigned char _binary_ghost_equip_wav_start;
-extern unsigned char _binary_ghost_equip_wav_size;
-extern unsigned char _binary_ghost_equip2_wav_start;
-extern unsigned char _binary_ghost_equip2_wav_size;
-extern unsigned char _binary_ghost_equip3_wav_start;
-extern unsigned char _binary_ghost_equip3_wav_size;
-extern unsigned char _binary_ghost_equip4_wav_start;
-extern unsigned char _binary_ghost_equip4_wav_size;
-extern unsigned char _binary_ghost_equip5_wav_start;
-extern unsigned char _binary_ghost_equip5_wav_size;
+#define BLOB_DEF(X) \
+    extern "C" const char binary_##X##_start asm("_binary_"#X"_start"); \
+    extern "C" const char binary_##X##_size  asm("_binary_"#X"_size")
 
-extern unsigned char _binary_ghost_ping_wav_start;
-extern unsigned char _binary_ghost_ping_wav_size;
-
-extern unsigned char _binary_ghost_idle_loop_wav_start;
-extern unsigned char _binary_ghost_idle_loop_wav_size;
+#define BLOB_USE(NAME, X) \
+    {NAME, {&binary_##X##_start, (size_t) &binary_##X##_size}}
 
 
-// font
-extern unsigned char _binary_greenm03_ttf_start;
-extern unsigned char _binary_greenm03_ttf_size;
+BLOB_DEF(ghost_equip_wav);
+BLOB_DEF(ghost_equip2_wav);
+BLOB_DEF(ghost_equip3_wav);
+BLOB_DEF(ghost_equip4_wav);
+BLOB_DEF(ghost_equip5_wav);
 
+BLOB_DEF(ghost_ping_wav);
+BLOB_DEF(ghost_idle_loop_wav);
 
-// background
-extern unsigned char _binary_background_png_start;
-extern unsigned char _binary_background_png_size;
+BLOB_DEF(greenm03_ttf);
+BLOB_DEF(background_png);
+BLOB_DEF(ghost_equip_wav);
 
-
-// hud
-extern unsigned char _binary_hud_blur_png_start;
-extern unsigned char _binary_hud_blur_png_size;
-extern unsigned char _binary_hud_left_png_start;
-extern unsigned char _binary_hud_left_png_size;
-extern unsigned char _binary_hud_right_png_start;
-extern unsigned char _binary_hud_right_png_size;
-extern unsigned char _binary_hud_text_png_start;
-extern unsigned char _binary_hud_text_png_size;
-extern unsigned char _binary_hud_fill_png_start;
-extern unsigned char _binary_hud_fill_png_size;
+BLOB_DEF(hud_blur_png);
+BLOB_DEF(hud_left_png);
+BLOB_DEF(hud_right_png);
+BLOB_DEF(hud_text_png);
+BLOB_DEF(hud_fill_png);
 
 
 const map<string, blob> blobs = {
-    {"ghost_equip.wav",  {&_binary_ghost_equip_wav_start,  (size_t) &_binary_ghost_equip_wav_size }},
-    {"ghost_equip2.wav", {&_binary_ghost_equip2_wav_start, (size_t) &_binary_ghost_equip2_wav_size}},
-    {"ghost_equip3.wav", {&_binary_ghost_equip3_wav_start, (size_t) &_binary_ghost_equip3_wav_size}},
-    {"ghost_equip4.wav", {&_binary_ghost_equip4_wav_start, (size_t) &_binary_ghost_equip4_wav_size}},
-    {"ghost_equip5.wav", {&_binary_ghost_equip5_wav_start, (size_t) &_binary_ghost_equip5_wav_size}},
-    {"ghost_ping.wav",   {&_binary_ghost_ping_wav_start,   (size_t) &_binary_ghost_ping_wav_size}},
+    BLOB_USE("ghost_equip.wav",  ghost_equip_wav),
+    BLOB_USE("ghost_equip2.wav", ghost_equip2_wav),
+    BLOB_USE("ghost_equip3.wav", ghost_equip3_wav),
+    BLOB_USE("ghost_equip4.wav", ghost_equip4_wav),
+    BLOB_USE("ghost_equip5.wav", ghost_equip5_wav),
 
-    {"ghost_idle_loop.wav", {&_binary_ghost_idle_loop_wav_start, (size_t) &_binary_ghost_idle_loop_wav_size}},
+    BLOB_USE("ghost_ping.wav", ghost_ping_wav),
+    BLOB_USE("ghost_idle_loop.wav", ghost_idle_loop_wav),
 
-    {"greenm03.ttf", {&_binary_greenm03_ttf_start, (size_t) &_binary_greenm03_ttf_size}},
+    BLOB_USE("greenm03.ttf", greenm03_ttf),
 
-    {"background.png", {&_binary_background_png_start, (size_t) &_binary_background_png_size}},
+    BLOB_USE("background.png", background_png),
 
-    {"hud_blur.png",  {&_binary_hud_blur_png_start,  (size_t) &_binary_hud_blur_png_size}},
-    {"hud_left.png",  {&_binary_hud_left_png_start,  (size_t) &_binary_hud_left_png_size}},
-    {"hud_right.png", {&_binary_hud_right_png_start, (size_t) &_binary_hud_right_png_size}},
-    {"hud_text.png",  {&_binary_hud_text_png_start,  (size_t) &_binary_hud_text_png_size}},
-    {"hud_fill.png",  {&_binary_hud_fill_png_start,  (size_t) &_binary_hud_fill_png_size}}
+    BLOB_USE("hud_blur.png", hud_blur_png),
+    BLOB_USE("hud_left.png", hud_left_png),
+    BLOB_USE("hud_right.png", hud_right_png),
+    BLOB_USE("hud_text.png", hud_text_png),
+    BLOB_USE("hud_fill.png", hud_fill_png)
 };

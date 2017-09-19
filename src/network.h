@@ -13,7 +13,7 @@
 #endif /* WIN32 */
 
 class network {
-    static std::thread thrd;
+    static inline std::thread thrd;
 
     static std::atomic<bool> running;
     static std::atomic<bool> valid;
