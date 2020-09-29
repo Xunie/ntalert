@@ -1,3 +1,4 @@
+#include <cstring>
 #include <iostream>
 #include <random>
 #include <sstream>
@@ -65,8 +66,8 @@ void network::grab_loop() {
 
         uint64_t to_sleep = (45*1000) + (mt()%(30*1000));
         while( valid and to_sleep > 0 and running ) {
-            sf::sleep( sf::milliseconds( min(to_sleep, 20ull) ) );
-            to_sleep -= min(to_sleep, 20ull);
+            sf::sleep( sf::milliseconds( min(to_sleep, (uint64_t) 20) ) );
+            to_sleep -= min(to_sleep, (uint64_t) 20);
         }
     }
 }
