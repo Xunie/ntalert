@@ -1,6 +1,8 @@
 cmake_minimum_required( VERSION 3.0 )
 
-project( ntalert )
+project( ntalert
+         LANGUAGES CXX
+)
 
 # this 'ere function adds the file as a blob to the target
 function( blobber_file filename )
@@ -17,8 +19,9 @@ function( blobber_file filename )
     )
 endfunction()
 
-find_package( Threads )
+find_package( Threads REQUIRED )
 
+set( BUILD_SHARED_LIBS FALSE )
 add_subdirectory( git-submodules/sfml )
 
 add_executable( ntalert
@@ -28,6 +31,8 @@ add_executable( ntalert
     src/sound.cpp
     src/blobs.cpp
     src/network.cpp
+
+    icon.rc
 )
 
 target_link_libraries( ntalert
@@ -39,6 +44,24 @@ target_link_libraries( ntalert
 
     Threads::Threads
 )
+
+if( WIN32 )
+    target_link_libraries( ntalert
+        ws2_32
+    )
+
+    # this ensures we link statically against everything
+    target_link_options( ntalert
+        PUBLIC -static -static-libstdc++ -static-libgcc
+    )
+
+    # disable the console window
+    if( NOT DEBUG )
+        target_link_options( ntalert
+            PUBLIC -mwindows
+        )
+    endif()
+endif()
 
 blobber_file( ghost_equip.wav )
 blobber_file( ghost_equip2.wav )
@@ -55,4 +78,8 @@ blobber_file( hud_text.png )
 blobber_file( hud_fill.png )
 blobber_file( greenm03.ttf )
 
-set_property( TARGET ntalert PROPERTY CXX_STANDARD 17 )
+set_target_properties( ntalert
+    PROPERTIES
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED ON
+)
