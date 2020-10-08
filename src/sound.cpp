@@ -39,7 +39,14 @@ void sound::update() {
     const uint32_t threshold = alert::get_threshold();
     if( network::is_valid() and num_players >= threshold ) {
         if( c.getElapsedTime().asSeconds() > max(1.0, 5.0-(num_players-threshold)) ) {
+			// for some reason, in later versions of SFML we have to first stop the sound
+			// I think in previous versions the rewinding was automatic?
+			beep.stop();
+
+			// play the beep
             beep.play();
+
+			// reset timer
             c.restart();
         }
     }
